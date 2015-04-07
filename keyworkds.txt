@@ -1,0 +1,4 @@
+OTAUpdate	KEYWORD1
+begin	KEYWORD2
+checkUpdate	KEYWORD2
+startUpdate	KEYWORD2
