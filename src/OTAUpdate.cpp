@@ -256,12 +256,12 @@ boolean OTAUpdateClass::downloadFile(const char* name) {
 	char buff[256];
 	
 	// download the firmware
-	if(!c.connect(this->host, 50180)) {
+	if(!c.connect(this->host, 80)) {
 		DEBUG_UPDATE("OTAUpdate::downloadFile - error connecting to update host\r\n");
 		return false;
 	}
 	// connected... send the get request
-	DEBUG_UPDATE("OTAUpdate::downloadFile %s:50180 'GET /%s/%s'\r\n", this->host, this->path, &name[4]);
+	DEBUG_UPDATE("OTAUpdate::downloadFile %s:80 'GET /%s/%s'\r\n", this->host, this->path, &name[4]);
 	
 	sprintf(buff, "GET /%s/%s", this->path, &name[4]);
 	c.print(buff);

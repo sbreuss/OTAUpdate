@@ -115,6 +115,23 @@ The Library will download the update.md5 and update.vxp file at the configured l
 	vm_md5sum - checking file C:\OTA\b_OTA.cpp.vxp
 	vm_md5sum - C:\OTA\b_OTA.cpp.vxp: 8efffeca19b39def1f992ffdb18e170c
 	OTAUpdate::begin - C:\OTA\b_OTA.cpp.vxp [8efffeca19b39def1f992ffdb18e170c]
+	OTAUpdate::parseUpdateMD5 - update.vxp [1fc27514eb1d9712b9c09f2c5f5a0776]
+	OTAUpdate::checkMD5 - C:\OTA\update.vxp 1fc27514eb1d9712b9c09f2c5f5a0776
+	vm_md5sum - checking file C:\OTA\update.vxp
+	vm_md5sum - C:\OTA\update.vxp: 1fc27514eb1d9712b9c09f2c5f5a0776
+	OTAUpdate::checkMD5 - OK
+	OTAUpdate::startFirmware - C:\MRE\update.vxp
+	calling vm_reboot_normal_start()
+
+	RUNNING THE UPDATED SKETCHE (datetime.ino example)
+	
+	rtc = 1072933422
+	datetimeInfo t.day/t.mon/t.year  t.hour:t.min:t.sec =    1/ 1/2004   5: 3:42
+	rtc = 1072933423
+	datetimeInfo t.day/t.mon/t.year  t.hour:t.min:t.sec =    1/ 1/2004   5: 3:43
+	rtc = 1072933424
+	datetimeInfo t.day/t.mon/t.year  t.hour:t.min:t.sec =    1/ 1/2004   5: 3:44
+
 
 ## TODO
  * 	specify a port (other than 80)
