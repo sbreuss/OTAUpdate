@@ -107,7 +107,7 @@ The Library will download the update.md5 and update.vxp file at the configured l
 	OTAUpdate::startFirmware - C:\OTA\b_OTA.cpp.vxp
 	calling vm_reboot_normal_start()
 
-	AFTER Rebooting
+AFTER Rebooting
 
 	OTAUpdate::begin -
 	OTAUpdateClass::begin - reading autostart.txt
@@ -123,7 +123,7 @@ The Library will download the update.md5 and update.vxp file at the configured l
 	OTAUpdate::startFirmware - C:\MRE\update.vxp
 	calling vm_reboot_normal_start()
 
-	RUNNING THE UPDATED SKETCHE (datetime.ino example)
+RUNNING THE UPDATED SKETCHE (datetime.ino example)
 	
 	rtc = 1072933422
 	datetimeInfo t.day/t.mon/t.year  t.hour:t.min:t.sec =    1/ 1/2004   5: 3:42
