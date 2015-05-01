@@ -101,6 +101,10 @@ boolean OTAUpdateClass::checkUpdate(void) {
 		return false;
 	}
 	
+	if(!DeleteHTTPHeader(UPDATE_MD5)) {
+		return false;
+	}
+		
 	if(!parseUpdateMD5(&vxp_name, &vxp_digest)) {
 		return false;
 	}
@@ -115,6 +119,10 @@ boolean OTAUpdateClass::checkUpdate(void) {
 		return false;
 	}
 	
+	if(!DeleteHTTPHeader(UPDATE_VXP)) {
+		return false;
+	}
+		
 	if(!checkMD5("C:\\" UPDATE_VXP, vxp_digest.c_str())) {
 		DEBUG_UPDATE("new firmware has a wrong md5sum!\r\n");
 		return false;
@@ -170,21 +178,99 @@ boolean OTAUpdateClass::performUpdate(void) {
 	return true;
 }
 
+boolean OTAUpdateClass::DeleteHTTPHeader(const char* name){
+	static char endofheader[5] ;
+	boolean HTTPHeaderreached = false;
+	char c;
+	
+	LFlash.begin();
+	
+	// open source file
+	LFile sourcefile = LFlash.open(name, FILE_READ);
+	if(!sourcefile) {
+		DEBUG_UPDATE("OTAUpdate::DeleteHTTPHeader - could not open %s\r\n", name);
+		return false;
+	}
+	sourcefile.seek(0);
+	
+	// open temporary file where we will copy source file without HTTP header
+	LFile tempfile = LFlash.open(TMPFILE, FILE_WRITE);
+	if(!tempfile) {
+		DEBUG_UPDATE("OTAUpdate::DeleteHTTPHeader - could not open %s\r\n", TMPFILE);
+		return false;
+	}	
+	tempfile.seek(0);
+	
+	while(sourcefile.available()) {
+		// read byte
+		c = sourcefile.read();
+		// if HTTP header is not reached, read until find double CRLF
+		if(HTTPHeaderreached == false){
+			// proceed a right shift of the  array
+			for(int i = 0; i < 3; i++){
+				endofheader[i] =  endofheader[i+1];
+			}
+			// add last received char at the end of the array
+			endofheader[3] = c;
+			//don't forget null caracter
+			endofheader[4] = '\0';	
+			// compare array with end of HTTP header key (double CRLF)
+			if (strcmp("\r\n\r\n", endofheader ) == 0){
+				// return true
+				DEBUG_UPDATE("OTAUpdate::DeleteHTTPHeader - end of HTTP header reached\r\n");
+				HTTPHeaderreached = true;
+			}
+			else{
+				HTTPHeaderreached = false;
+			}
+		}
+		else{
+			//Serial.print(c);
+			tempfile.write(c);
+		}
+	}
+	sourcefile.close();
+	//remove source file
+	LFlash.remove((char*)name);
+	
+	tempfile.close();
+		
+	if(!copyFile(TMPFILE, name)){
+		DEBUG_UPDATE("OTAUpdate::DeleteHTTPHeader - could not replace file %s\r\n", name);
+		return false;
+	}
+	else{
+		DEBUG_UPDATE("OTAUpdate::DeleteHTTPHeader - %s file replace with no HTTP header\r\n", name);
+		return true;
+	}
+	
+	//remove temp file
+	LFlash.remove((char*)TMPFILE);	
+}
 
 boolean OTAUpdateClass::downloadFile(const char* name) {
 	// make some http requests to check for firmware updates
 	LGPRSClient c;
 	uint8_t buffer[DIGEST_SIZE_BUFFER];
 	int n , size, max_millis;
+	char buff[256];
 	
 	// download the firmware
-	if(!c.connect(this->host, 80)) {
+	if(!c.connect(this->host, 50180)) {
 		DEBUG_UPDATE("OTAUpdate::downloadFile - error connecting to update host\r\n");
 		return false;
 	}
 	// connected... send the get request
-	DEBUG_UPDATE("OTAUpdate::downloadFile %s:80 'GET /%s/%s'\r\n", this->host, this->path, &name[4]);
-	c.printf("GET /%s/%s\n", this->path, &name[4]);
+	DEBUG_UPDATE("OTAUpdate::downloadFile %s:50180 'GET /%s/%s'\r\n", this->host, this->path, &name[4]);
+	
+	sprintf(buff, "GET /%s/%s", this->path, &name[4]);
+	c.print(buff);
+	//c.printf("GET /%s/%s", this->path, &name[4]);
+	c.println(" HTTP/1.1");
+    c.print("Host: ");
+    c.println(this->host);
+    c.println("Connection: close");
+    c.println();
 
 	// save the result
 	max_millis = millis() + 10000;
@@ -195,12 +281,14 @@ boolean OTAUpdateClass::downloadFile(const char* name) {
 	ota.seek(0);
 	size = 0;
 	
+	// get data content of the file
 	while(c.connected()) {
 		int n = c.read(buffer, 1024);
 		if(n > 0) {
 			max_millis = millis() + 2000;
 			ota.write(buffer, n);
 			size += n;
+			DEBUG_UPDATE("size = %d\r", size);
 		} else {
 			if(millis() > max_millis) {
 				DEBUG_UPDATE("OTAUpdate::downloadFile - timed out!\r\n");
@@ -215,7 +303,7 @@ boolean OTAUpdateClass::downloadFile(const char* name) {
 	c.stop();
 	ota.close();
 	
-	DEBUG_UPDATE("OTAUpdate::downloadFile - done! got %d bytes\r\n", size);
+	DEBUG_UPDATE("\r\nOTAUpdate::downloadFile - done! got %d bytes\r\n", size);
 	return size > 0;
 }
 
@@ -234,9 +322,15 @@ boolean OTAUpdateClass::parseUpdateMD5(String* vxp_name, String* vxp_digest) {
 	update_md5.close();
 	line.trim();
 	
-	int idx = line.indexOf(" ");
-	*vxp_digest = line.substring(0, idx);	
-	*vxp_name = line.substring(idx + 1);
+	// Warning : buffer line contain HTTP header !
+	// should look for vxp name and md5 from the end of buffer
+	
+	// look for index of last word (md5 name file)
+	int idx = line.lastIndexOf(" ");
+	// get md4 name file from index until end of buffer
+	*vxp_name = line.substring(idx);
+	// get md5 from index and index - 32 bytes (lenght of md5 is constant)
+	*vxp_digest = line.substring(idx - 33, idx - 1);
 	
 	vxp_name->trim();
 	vxp_digest->trim();

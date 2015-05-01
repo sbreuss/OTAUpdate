@@ -15,7 +15,7 @@ void setup() {
   }
   Serial.printf("\r\nstarted...\r\n");
   Serial.printf("init gprs... \r\n");
-  while (!LGPRS.attachGPRS()) {
+  while (!LGPRS.attachGPRS("Free", NULL, NULL)) {
     delay(500);
   }
 

@@ -12,6 +12,8 @@
 #define OTA_FW		"OTA\\b_OTA.cpp.vxp"
 #define UPDATE_VXP	"OTA\\update.vxp"
 #define UPDATE_MD5	"OTA\\update.md5"
+#define TMPFILE		"OTA\\tmp.txt"
+
 
 #include <Arduino.h>
 #include <LTask.h>
@@ -54,6 +56,7 @@ private:
 	boolean checkUpdateFiles(String* vxp_update, String* vxp_digest);
 	boolean startFirmware(const char* name);
 	boolean copyFile(const char* src, const char* dst);
+	boolean DeleteHTTPHeader(const char* name);
 };
 
 extern OTAUpdateClass OTAUpdate;
