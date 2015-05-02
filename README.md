@@ -17,14 +17,14 @@ Please follow these steps :
 
 - Open arduino IDE. In File->Preference, check option for Verbose compilation. It is necessary to display where are precompiled files (temporary files)
 
-- Load and build examples/OTA.ino sketch. Thanks to verbose info, you can copy and pase precompiled file OTA.cpp.vxp into internal flash of the LinkIt ONE : OTA\b_OTA.cpp.vxp
+- Load and build examples/OTA.ino sketch. Thanks to verbose info, you can copy, paste and rename precompiled file OTA.cpp.vxp into internal flash of the LinkIt ONE : OTA\b_OTA.cpp.vxp 
 
 - Load and build your final sketche. Get precompiled file and rename it update.vxp
 
 - Compute md5 file. On a Linux machine run this command
 	$md5sum update.vxp > update.md5sum
 	
-- Copy update.vxp and update.md5 on a server the server (the one you specify IP adress and path in your sketche)
+- Copy update.vxp and update.md5 on server folder (the one you specify IP adress and path in your sketche)
 
 
 The Library will download the update.md5 and update.vxp file at the configured location and check if the md5sum within the update file and the installed firmware differ. If the are not the same, the updater in OTA\b_OTA.vxp.cpp will be started to update the firmware.
