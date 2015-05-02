@@ -6,7 +6,7 @@ Here are bugs fixed :
 - downloadFile function was also downloading HTTP header info in the file, so that was corrupting file and md5 was wrong. I have write a function that remove these header info after download.
 
 Added feature :
-- You can specify a port in function begin : OTAUpdate.begin("<host or ip>", "<port>", "<path>");   . This is more flexible than before (port 80 hard coded)
+- You can specify a port in function begin : OTAUpdate.begin("host or ip", "port", "path");   . This is more flexible than before (port 80 hard coded)
 
 # OTAUpdate
 OTAUpdate is a Library to perform Over-The-Air Updates of your [LinkIt ONE](https://labs.mediatek.com/site/global/developer_tools/mediatek_linkit/whatis_linkit/index.gsp). The library can be used to check for firmware updates and install them remotely into the flash of the board. 
