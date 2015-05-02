@@ -2,10 +2,11 @@ This is a fork from https://github.com/sbreuss/OTAUpdate
 
 Code was not working, sbreuss was not replying so I has made my own modification.
 Here are bugs fixed :
-
-
 - HTTP GET request was not well made
 - downloadFile function was also downloading HTTP header info in the file, so that was corrupting file and md5 was wrong. I have write a function that remove these header info after download.
+
+Added feature :
+- You can specify a port in function begin : OTAUpdate.begin("<host or ip>", "<port>", "<path>");   . This is more flexible than before (port 80 hard coded)
 
 # OTAUpdate
 OTAUpdate is a Library to perform Over-The-Air Updates of your [LinkIt ONE](https://labs.mediatek.com/site/global/developer_tools/mediatek_linkit/whatis_linkit/index.gsp). The library can be used to check for firmware updates and install them remotely into the flash of the board. 
@@ -52,7 +53,7 @@ The Library will download the update.md5 and update.vxp file at the configured l
         delay(500);
       }
     
-      OTAUpdate.begin("<host or ip>", "<path>");
+      OTAUpdate.begin("<host or ip>", "<port>", "<path>");
     }
     
     void loop() {
@@ -131,7 +132,3 @@ RUNNING THE UPDATED SKETCHE (datetime.ino example)
 	datetimeInfo t.day/t.mon/t.year  t.hour:t.min:t.sec =    1/ 1/2004   5: 3:43
 	rtc = 1072933424
 	datetimeInfo t.day/t.mon/t.year  t.hour:t.min:t.sec =    1/ 1/2004   5: 3:44
-
-
-## TODO
- * 	specify a port (other than 80)

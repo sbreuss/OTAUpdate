@@ -7,7 +7,7 @@
 #include <LGPRS.h>
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   while (!Serial.available()) {
     delay(100);
@@ -15,11 +15,11 @@ void setup() {
   }
   Serial.printf("\r\nstarted...\r\n");
   Serial.printf("init gprs... \r\n");
-  while (!LGPRS.attachGPRS("Free", NULL, NULL)) {
+  while (!LGPRS.attachGPRS()) {
     delay(500);
   }
 
-  OTAUpdate.begin("<host or ip>", "<path>");
+  OTAUpdate.begin("<host or ip>", "<port>", "<path>");
 }
 
 void loop() {

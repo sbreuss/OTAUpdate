@@ -7,7 +7,7 @@ OTAUpdateClass::OTAUpdateClass() {
 	this->initialized = false;
 }
 
-boolean OTAUpdateClass::begin(const char* host, const char* path) {
+boolean OTAUpdateClass::begin(const char* host, const char* port, const char* path) {
 	DEBUG_UPDATE("OTAUpdate::begin - %s %s\r\n", host, path);
 	
 	// initialize our memory structures
@@ -16,8 +16,10 @@ boolean OTAUpdateClass::begin(const char* host, const char* path) {
 	memset(this->firmware_digest, 0, DIGEST_SIZE_CHAR);
 	memset(this->host, 0, OTA_MAX_PATH_LEN);
 	memset(this->path, 0, OTA_MAX_PATH_LEN);
+	memset(this->port, 0, OTA_MAX_PATH_LEN);
 	strncpy(this->host, host, OTA_MAX_PATH_LEN-1);
 	strncpy(this->path, path, OTA_MAX_PATH_LEN-1);
+	strncpy(this->port, port, OTA_MAX_PATH_LEN-1);
 	
 	// read the firmware information
 	LFlash.begin();
@@ -255,13 +257,17 @@ boolean OTAUpdateClass::downloadFile(const char* name) {
 	int n , size, max_millis;
 	char buff[256];
 	
+	//convert string to int
+	String sthostport = this->port;
+	unsigned int uinthostport = sthostport.toInt();
+	
 	// download the firmware
-	if(!c.connect(this->host, 80)) {
+	if(!c.connect(this->host, uinthostport)) {
 		DEBUG_UPDATE("OTAUpdate::downloadFile - error connecting to update host\r\n");
 		return false;
 	}
 	// connected... send the get request
-	DEBUG_UPDATE("OTAUpdate::downloadFile %s:80 'GET /%s/%s'\r\n", this->host, this->path, &name[4]);
+	DEBUG_UPDATE("OTAUpdate::downloadFile %s:%d 'GET /%s/%s'\r\n", this->host, uinthostport, this->path, &name[4]);
 	
 	sprintf(buff, "GET /%s/%s", this->path, &name[4]);
 	c.print(buff);
