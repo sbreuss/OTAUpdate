@@ -58,7 +58,6 @@ private:
 	boolean checkUpdateFiles(String* vxp_update, String* vxp_digest);
 	boolean startFirmware(const char* name);
 	boolean copyFile(const char* src, const char* dst);
-	boolean DeleteHTTPHeader(const char* name);
 };
 
 extern OTAUpdateClass OTAUpdate;

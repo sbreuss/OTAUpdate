@@ -3,7 +3,7 @@ This is a fork from https://github.com/sbreuss/OTAUpdate
 Code was not working, sbreuss was not replying so I has made my own modification.
 Here are bugs fixed :
 - HTTP GET request was not well made
-- downloadFile function was also downloading HTTP header info in the file, so that was corrupting file and md5 was wrong. I have write a function that remove these header info after download.
+- downloadFile() function was also writing HTTP header info in the file, so that was corrupting file and md5 was wrong. I have rewrite this function with HTTP header skipping.
 
 Added feature :
 - You can specify a port in function begin : OTAUpdate.begin("host or ip", "port", "path");   . This is more flexible than before (port 80 hard coded)
