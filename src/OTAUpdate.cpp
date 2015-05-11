@@ -218,8 +218,11 @@ boolean OTAUpdateClass::downloadFile(const char* name) {
 		if(HTTPHeaderreached == false){
 			// read byte
 			byc = c.read();
-			// if HTTP header is not reached, read until find double CRLF
-			if(HTTPHeaderreached == false){
+			if(byc > 0) {
+				max_millis = millis() + 2000;
+				// if HTTP header is not reached, read until find double CRLF
+				Serial.print(byc);
+				
 				// proceed a right shift of the  array
 				for(int i = 0; i < 3; i++){
 					endofheader[i] =  endofheader[i+1];
@@ -231,13 +234,23 @@ boolean OTAUpdateClass::downloadFile(const char* name) {
 				// compare array with end of HTTP header key (double CRLF)
 				if (strcmp("\r\n\r\n", endofheader ) == 0){
 					// return true
-					DEBUG_UPDATE("OTAUpdate::DeleteHTTPHeader - end of HTTP header reached\r\n");
+					DEBUG_UPDATE("OTAUpdate::downloadFile - end of HTTP header reached\r\n");
 					HTTPHeaderreached = true;
 				}
 				else{
 					HTTPHeaderreached = false;
 				}
-			}		
+			}
+			else {
+				if(millis() > max_millis) {
+					DEBUG_UPDATE("OTAUpdate::downloadFile - timed out!\r\n");
+					c.stop();
+					ota.close();
+					return false;
+				} else {
+					delay(100);
+				}
+			}							
 		}
 		else{
 			int n = c.read(buffer, 1024);
