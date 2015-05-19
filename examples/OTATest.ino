@@ -7,7 +7,7 @@
 #include <LGPRS.h>
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   while (!Serial.available()) {
     delay(100);
@@ -19,7 +19,7 @@ void setup() {
     delay(500);
   }
 
-  OTAUpdate.begin("<host or ip>", "<path>");
+  OTAUpdate.begin("<host or ip>", "<port>", "<path>");
 }
 
 void loop() {

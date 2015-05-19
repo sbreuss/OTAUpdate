@@ -12,6 +12,8 @@
 #define OTA_FW		"OTA\\b_OTA.cpp.vxp"
 #define UPDATE_VXP	"OTA\\update.vxp"
 #define UPDATE_MD5	"OTA\\update.md5"
+#define TMPFILE		"OTA\\tmp.txt"
+
 
 #include <Arduino.h>
 #include <LTask.h>
@@ -32,7 +34,7 @@ public:
 	//  Initialize the OTA updater with host and path
 	// RETURNS
 	//  true if succeed, false if failed
-	boolean begin(const char* host="", const char* path="");
+	boolean begin(const char* host="", const char* port="", const char* path="");
 	
 	boolean getFirmwareName(char* name, size_t len);
 	boolean getFirmwareDigest(char* digest, size_t len);
@@ -46,7 +48,9 @@ private:
 	char firmware_digest[DIGEST_SIZE_CHAR];
 	char firmware_name[OTA_MAX_PATH_LEN];
 	char host[OTA_MAX_PATH_LEN];
+	char port[OTA_MAX_PATH_LEN];
 	char path[OTA_MAX_PATH_LEN];
+	
 	
 	boolean downloadFile(const char* name);
 	boolean parseUpdateMD5(String* vxp_name, String* vxp_digest);
